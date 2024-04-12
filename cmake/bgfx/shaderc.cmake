@@ -12,34 +12,20 @@
 file(
 	GLOB
 	SHADERC_SOURCES #
-	${BGFX_DIR}/tools/shaderc/*.cpp #
-	${BGFX_DIR}/tools/shaderc/*.h #
-	${BGFX_DIR}/src/shader* #
+	${BGFX_DIR}/tools/shaderc/shaderc.cpp #
+	${BGFX_DIR}/tools/shaderc/shaderc_glsl.cpp #
+	${BGFX_DIR}/tools/shaderc/shaderc.h #
 )
 
-add_executable(shaderc ${SHADERC_SOURCES})
+add_library(shaderc STATIC ${SHADERC_SOURCES})
 
 target_link_libraries(
 	shaderc
-	PRIVATE bx
+	PUBLIC bx
 			bgfx-vertexlayout
 			fcpp
 			glslang
 			glsl-optimizer
-			spirv-opt
-			spirv-cross
-)
-target_link_libraries(
-	shaderc
-	PRIVATE bx
-			bimg
-			bgfx-vertexlayout
-			fcpp
-			glslang
-			glsl-optimizer
-			spirv-opt
-			spirv-cross
-			webgpu
 )
 if(BGFX_AMALGAMATED)
 	target_link_libraries(shaderc PRIVATE bgfx-shader)
@@ -50,12 +36,12 @@ set_target_properties(
 					   OUTPUT_NAME ${BGFX_TOOLS_PREFIX}shaderc #
 )
 
-if(BGFX_BUILD_TOOLS_SHADER)
-	add_executable(bgfx::shaderc ALIAS shaderc)
-	if(BGFX_CUSTOM_TARGETS)
-		add_dependencies(tools shaderc)
-	endif()
-endif()
+#if(BGFX_BUILD_TOOLS_SHADER)
+#	add_executable(bgfx::shaderc ALIAS shaderc)
+#	if(BGFX_CUSTOM_TARGETS)
+#		add_dependencies(tools shaderc)
+#	endif()
+#endif()
 
 if(ANDROID)
 	target_link_libraries(shaderc PRIVATE log)
@@ -63,6 +49,6 @@ elseif(IOS)
 	set_target_properties(shaderc PROPERTIES MACOSX_BUNDLE ON MACOSX_BUNDLE_GUI_IDENTIFIER shaderc)
 endif()
 
-if(BGFX_INSTALL)
-	install(TARGETS shaderc EXPORT "${TARGETS_EXPORT_NAME}" DESTINATION "${CMAKE_INSTALL_BINDIR}")
-endif()
+#if(BGFX_INSTALL)
+#	install(TARGETS shaderc EXPORT "${TARGETS_EXPORT_NAME}" DESTINATION "${CMAKE_INSTALL_BINDIR}")
+#endif()
